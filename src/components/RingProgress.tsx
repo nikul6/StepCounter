@@ -1,7 +1,8 @@
 import { StyleSheet, View } from 'react-native'
 import React, { useEffect } from 'react'
-import SVG, { Circle } from 'react-native-svg';
+import SVG, { Circle, CircleProps } from 'react-native-svg';
 import Animated, { useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
+import { AntDesign } from '@expo/vector-icons';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -20,12 +21,24 @@ export default function RingProgress({ redius = 100, strokeWidth = 35, progress 
   const fill = useSharedValue(0);
 
   useEffect(() => {
-    fill.value = withTiming(progress);
+    fill.value = withTiming(progress, { duration: 1500 });
   }, []);
 
   const animatedProps = useAnimatedProps(() => ({
     strokeDasharray: [cirumference * fill.value, cirumference],
   }))
+
+  const circleDefualtProps: CircleProps = {
+    r: innerRedius,
+    cx: redius,
+    cy: redius,
+    originX: redius,
+    originY: redius,
+    strokeWidth: strokeWidth,
+    stroke: color,
+    strokeLinecap: "round",
+    rotation: "-90"
+  }
 
   return (
     <View style={{
@@ -35,28 +48,19 @@ export default function RingProgress({ redius = 100, strokeWidth = 35, progress 
     }}>
       <SVG>
         <Circle
-          cx={redius}
-          cy={redius}
-          r={innerRedius}
-          // fill={'yellow'}
-          strokeWidth={strokeWidth}
-          stroke={color}
+          {...circleDefualtProps}
           opacity={0.2}
         />
         <AnimatedCircle
           animatedProps={animatedProps}
-          r={innerRedius}
-          cx={redius}
-          cy={redius}
-          originX={redius}
-          originY={redius}
-          strokeWidth={strokeWidth}
-          stroke={color}
-          strokeDasharray={[cirumference * progress, cirumference]}
-          strokeLinecap="round"
-          rotation="-90"
+          {...circleDefualtProps}
         />
       </SVG>
+      <AntDesign
+        name="arrowright"
+        size={strokeWidth * 0.8}
+        color="#000"
+        style={{ position: 'absolute', alignSelf: 'center', top: strokeWidth * 0.1 }} />
     </View>
   )
 }
