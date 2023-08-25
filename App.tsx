@@ -7,7 +7,10 @@ import { useEffect, useState } from 'react';
 
 const permissions: HealthKitPermissions = {
   permissions: {
-    read: [AppleHealthKit.Constants.Permissions.Steps],
+    read: [
+      AppleHealthKit.Constants.Permissions.Steps,
+      AppleHealthKit.Constants.Permissions.FlightsClimbed
+    ],
     write: [],
   }
 }
@@ -17,6 +20,7 @@ const STEPS_GOAL = 10_000
 export default function App() {
   const [hasPermissons, setHasPermissions] = useState(false);
   const [stpes, setSteps] = useState(0);
+  const [flights, setFlights] = useState(0);
 
   useEffect(() => {
     AppleHealthKit.initHealthKit(permissions, (err) => {
@@ -41,9 +45,18 @@ export default function App() {
     AppleHealthKit.getStepCount(option, (err, results) => {
       if (err) {
         console.log("error steps")
+        return;
       }
       // console.log("results ---> ", results.value)
       setSteps(results.value);
+    })
+
+    AppleHealthKit.getFlightsClimbed(option, (err, results) => {
+      if (err) {
+        console.log("error flights climbed")
+        return;
+      }
+      setFlights(results.value)
     })
   }, [hasPermissons])
 
@@ -52,8 +65,8 @@ export default function App() {
       <RingProgress redius={150} strokeWidth={50} progress={stpes / STEPS_GOAL} />
       <View style={styles.values}>
         <Value label="Steps" value={stpes.toString()} />
-        <Value label="Distance" value="0,75 km" />
-        <Value label="Flights Climbed" value="12" />
+        <Value label="Distance" value={"0,75 km"} />
+        <Value label="Flights Climbed" value={flights.toString()} />
       </View>
       <StatusBar style="auto" />
     </View>
