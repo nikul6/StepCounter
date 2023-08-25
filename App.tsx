@@ -9,7 +9,8 @@ const permissions: HealthKitPermissions = {
   permissions: {
     read: [
       AppleHealthKit.Constants.Permissions.Steps,
-      AppleHealthKit.Constants.Permissions.FlightsClimbed
+      AppleHealthKit.Constants.Permissions.FlightsClimbed,
+      AppleHealthKit.Constants.Permissions.DistanceWalkingRunning,
     ],
     write: [],
   }
@@ -21,6 +22,7 @@ export default function App() {
   const [hasPermissons, setHasPermissions] = useState(false);
   const [stpes, setSteps] = useState(0);
   const [flights, setFlights] = useState(0);
+  const [distance, setDistance] = useState(0);
 
   useEffect(() => {
     AppleHealthKit.initHealthKit(permissions, (err) => {
@@ -58,6 +60,14 @@ export default function App() {
       }
       setFlights(results.value)
     })
+
+    AppleHealthKit.getDistanceWalkingRunning(option, (err, results) => {
+      if (err) {
+        console.log("error distance")
+        return;
+      }
+      setDistance(results.value)
+    })
   }, [hasPermissons])
 
   return (
@@ -65,7 +75,7 @@ export default function App() {
       <RingProgress redius={150} strokeWidth={50} progress={stpes / STEPS_GOAL} />
       <View style={styles.values}>
         <Value label="Steps" value={stpes.toString()} />
-        <Value label="Distance" value={"0,75 km"} />
+        <Value label="Distance" value={`${(distance / 1000).toFixed(2)} km`} />
         <Value label="Flights Climbed" value={flights.toString()} />
       </View>
       <StatusBar style="auto" />
