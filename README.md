@@ -27,8 +27,7 @@ npm run ios
 ```
 
 ## 🚀 UI
-Home             
--------------------------
+Home
 ![alt text](https://github.com/nikul6/StepCounter/blob/main/assets/AppImages/Home.png)
 
 ## 📝 Notes
